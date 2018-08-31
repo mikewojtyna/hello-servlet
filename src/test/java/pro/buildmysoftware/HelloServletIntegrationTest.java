@@ -1,8 +1,6 @@
-package pro.buildmysoftware.jetty;
+package pro.buildmysoftware;
 
-import com.github.mjeanroy.junit.servers.annotations.TestServer;
-import com.github.mjeanroy.junit.servers.jetty.EmbeddedJetty;
-import com.github.mjeanroy.junit.servers.runner.JunitServerRunner;
+import org.apache.catalina.startup.Tomcat;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
@@ -12,16 +10,13 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,18 +25,30 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
-@RunWith(JunitServerRunner.class)
 public class HelloServletIntegrationTest {
-	@TestServer
-	public static EmbeddedJetty jetty;
+
+	private Tomcat tomcat;
+
+	@Before
+	public void beforeEach() throws Exception {
+		tomcat = EmbeddedTomcatFactory.create();
+		tomcat.start();
+	}
+
+	@After
+	public void afterEach() throws Exception {
+		tomcat.stop();
+	}
 
 	@Test
 	public void should_ReturnHelloPageWithNullName_When_Get() throws
-		IOException {
+		Exception {
+		// given
+		String uri = uri("/hello");
+
 		// when
 		CloseableHttpResponse response = HttpClientBuilder.create()
-			.build().execute(new HttpGet(jetty.getUrl() +
-				"/hello"));
+			.build().execute(new HttpGet(uri));
 
 		// then
 		assertThat(response.getStatusLine().getStatusCode(), is(org
@@ -53,7 +60,7 @@ public class HelloServletIntegrationTest {
 	@Test
 	public void should_StoreNameInSession_When_Post() throws Exception {
 		// given
-		String uri = jetty.getUrl() + "/hello";
+		String uri = uri("/hello");
 		CookieStore cookieStore = new BasicCookieStore();
 		HttpClient httpClient = HttpClientBuilder.create().
 			setDefaultCookieStore(cookieStore).build();
@@ -74,5 +81,10 @@ public class HelloServletIntegrationTest {
 			(uri));
 		assertThat(EntityUtils.toString(getResponse.getEntity()),
 			containsString("hello goobar!"));
+	}
+
+	private String uri(String endpoint) {
+		return String.format("http://localhost:%s/%s", tomcat
+			.getConnector().getPort(), endpoint);
 	}
 }
