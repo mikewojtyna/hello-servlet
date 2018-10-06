@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,8 +32,12 @@ public class HelloServletIntegrationTest {
 
 	@Before
 	public void beforeEach() throws Exception {
-		tomcat = EmbeddedTomcatFactory.create();
+		tomcat = EmbeddedTomcatFactory.create(randomPort());
 		tomcat.start();
+	}
+
+	private int randomPort() {
+		return new Random().nextInt(10000) + 8080;
 	}
 
 	@After
