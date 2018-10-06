@@ -2,8 +2,6 @@ package pro.buildmysoftware;
 
 import javax.servlet.*;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class LogFilter implements Filter {
 	@Override
