@@ -13,24 +13,23 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class HelloServletIntegrationTest {
 
 	private Tomcat tomcat;
 
-	@Before
+	@BeforeEach
 	public void beforeEach() throws Exception {
 		tomcat = EmbeddedTomcatFactory.create(randomPort());
 		tomcat.start();
@@ -40,14 +39,14 @@ public class HelloServletIntegrationTest {
 		return new Random().nextInt(10000) + 8080;
 	}
 
-	@After
+	@AfterEach
 	public void afterEach() throws Exception {
 		tomcat.stop();
 	}
 
+	@DisplayName("should return hello page with null name when get")
 	@Test
-	public void should_ReturnHelloPageWithNullName_When_Get() throws
-		Exception {
+	public void test0() throws Exception {
 		// given
 		String uri = uri("/hello");
 
@@ -56,14 +55,15 @@ public class HelloServletIntegrationTest {
 			.build().execute(new HttpGet(uri));
 
 		// then
-		assertThat(response.getStatusLine().getStatusCode(), is(org
-			.apache.http.HttpStatus.SC_OK));
-		assertThat(EntityUtils.toString(response.getEntity()),
-			containsString("hello null!"));
+		assertThat(response.getStatusLine().getStatusCode()).isEqualTo
+			(SC_OK);
+		assertThat(EntityUtils.toString(response.getEntity()).contains
+			("hello null!"));
 	}
 
+	@DisplayName("should store name in session when post")
 	@Test
-	public void should_StoreNameInSession_When_Post() throws Exception {
+	public void test1() throws Exception {
 		// given
 		String uri = uri("/hello");
 		CookieStore cookieStore = new BasicCookieStore();
@@ -79,13 +79,13 @@ public class HelloServletIntegrationTest {
 		httpClient.execute(post);
 
 		// then
-		assertThat(cookieStore.getCookies(), hasSize(1));
-		assertThat(cookieStore.getCookies().get(0).getName(), is
-			("JSESSIONID"));
+		assertThat(cookieStore.getCookies()).hasSize(1);
+		assertThat(cookieStore.getCookies().get(0).getName())
+			.isEqualTo("JSESSIONID");
 		HttpResponse getResponse = httpClient.execute(new HttpGet
 			(uri));
-		assertThat(EntityUtils.toString(getResponse.getEntity()),
-			containsString("hello goobar!"));
+		assertThat(EntityUtils.toString(getResponse.getEntity())
+			.contains("hello goobar!"));
 	}
 
 	private String uri(String endpoint) {
