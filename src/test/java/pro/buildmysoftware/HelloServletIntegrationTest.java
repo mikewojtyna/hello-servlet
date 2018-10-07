@@ -84,8 +84,8 @@ public class HelloServletIntegrationTest {
 			.isEqualTo("JSESSIONID");
 		HttpResponse getResponse = httpClient.execute(new HttpGet
 			(uri));
-		assertThat(EntityUtils.toString(getResponse.getEntity())
-			.contains("hello goobar!"));
+		assertThat(EntityUtils.toString(getResponse.getEntity()))
+			.contains("hello goobar!");
 	}
 
 	private String uri(String endpoint) {
