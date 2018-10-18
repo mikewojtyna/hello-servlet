@@ -5,7 +5,7 @@
   Time: 00:49
   To change this template use File | Settings | File Templates.
 --%>
-<form action="hello" method="POST" target="_blank">
+<form action="hello" method="POST">
     <input type="text" name="name"/>
     <input type="submit" value="Post"/>
 </form>
