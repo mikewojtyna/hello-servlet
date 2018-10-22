@@ -7,7 +7,7 @@
 
 	<groupId>com.sdacademy</groupId>
 	<artifactId>test-web-app</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>${twitter.version}</version>
 	<packaging>war</packaging>
 
 	<name>test-web-app Maven Webapp</name>
@@ -32,9 +32,21 @@
 		<jstl-api.version>1.2.2</jstl-api.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<httpclient.version>4.5.6</httpclient.version>
+		<twitter.version>1.0-SNAPSHOT</twitter.version>
 	</properties>
 
 	<dependencies>
+		<!--
+		TODO: create a public maven repo on GitHub to host artifacts.
+		Currently this dependency will not be resolved,
+		unless its explicitly installed in the local repository.
+		Depending on a local repo is a bad idea.
+		 -->
+		<dependency>
+			<groupId>pl.sdacademy</groupId>
+			<artifactId>twitter</artifactId>
+			<version>${twitter.version}</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/taglibs/standard -->
 		<dependency>
 			<groupId>taglibs</groupId>
