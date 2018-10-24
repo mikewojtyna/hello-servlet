@@ -22,7 +22,7 @@ public class ServletContextInitializer implements ServletContextListener {
 
 	private void registerTwitterServlet(ServletContext context) {
 		context.addServlet("TwitterServlet", new TwitterServlet
-			(DashboardFactory.createDataSource())).addMapping
+			(DashboardFactory.createDashboard())).addMapping
 			("/twitter");
 	}
 }

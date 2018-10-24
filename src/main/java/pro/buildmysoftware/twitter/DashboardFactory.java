@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * the needs of the application.
  */
 public class DashboardFactory {
-	public static Dashboard createDataSource() {
+	public static Dashboard createDashboard() {
 		try {
 			DataSource dataSource = DataSourceFactory
 				.createH2DataSource();
